@@ -5,6 +5,14 @@ import re
 
 DEBUG=False
 
+def score(word):
+    scores={'j':10, 'q':10, 'z':10, 'x':8, 'd':2, 'n':2, 'l':2, 'u':2, 'h':3, 'g':3, 'y':3, 'b':4, 'c':4, 'f':4, 'm':4, 'p':4, 'w':4, 'v':5, 'k':5, }
+
+    s=0
+    for c in word:
+        s+=scores[c] if c in scores else 1
+    return s
+
 def alpha(val):
     only_alpha=''
 
@@ -46,7 +54,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='find a word in dictionary')
     parser.add_argument('regex', type=str, help='regular expressions to search for')
     parser.add_argument('characters', type=str, nargs='?', default='', help='characters in hand')
-    parser.add_argument('--dict', dest='dictionary', type=str, help='dictionary to use', default='twl.txt')
+    parser.add_argument('--dict', dest='dictionary', type=str, help='dictionary to use', default='enable1.txt')
     #parser.add_argument('--debug', dest='dictionary', type=str, help='dictionary to use', default='twl.txt')
 
     args = parser.parse_args()
@@ -61,9 +69,15 @@ if __name__ == '__main__':
     if DEBUG: print(hashChars)
     if DEBUG: print('----------------')
 
+    answers=[]
     for dict_item in the_dict:
         foo=pattern.search(dict_item)
         if foo is not None:
             if compHashes(hashVal(dict_item),hashChars):
                 if DEBUG: print('ANSWER:  ',)
-                print(dict_item)
+                #print(dict_item)
+                answers.append(dict_item)
+
+    answers.sort(key=len)
+    answers.sort(key=score)
+    [ print(a, score(a)) for a in answers ]
